@@ -205,7 +205,7 @@ class Stats(object):
         self._dcr_pool_switches = value
 
     def to_json(self):
-        return json.dumps(self.to_dictionary())
+        return json.dumps(self.to_dictionary(), indent=4)
 
     def to_dictionary(self):
         result = {}

@@ -332,11 +332,40 @@ class ExtendedStats(object):
         self._total_gpu_power = value
 
     def to_json(self):
-        return json.dumps(self.to_dictionary())
+        return json.dumps(self.to_dictionary(), indent=4)
 
     # TODO: Implement this function
     def to_dictionary(self):
-        result = {}
+        result = {
+            "dcr_accepted_shares": self.dcr_accepted_shares,
+            "dcr_accepted_shares_by_gpu": self.dcr_accepted_shares_by_gpu,
+            "dcr_hash_rate": self.dcr_hash_rate,
+            "dcr_hash_rate_by_gpu": self.dcr_hash_rate_by_gpu,
+            "dcr_invalid_shares": self.dcr_invalid_shares,
+            "dcr_invalid_shares_by_gpu": self.dcr_accepted_shares_by_gpu,
+            "dcr_pool_switches": self.dcr_pool_switches,
+            "dcr_rejected_shares": self.dcr_rejected_shares,
+            "dcr_rejected_shares_by_gpu": self.dcr_rejected_shares_by_gpu,
+            "eth_accepted_shares": self.eth_accepted_shares,
+            "eth_accepted_shares_by_gpu": self.eth_accepted_shares_by_gpu,
+            "eth_hash_rate": self.eth_hash_rate,
+            "eth_hash_rate_by_gpu": self.eth_hash_rate_by_gpu,
+            "eth_invalid_shares": self.eth_invalid_shares,
+            "eth_invalid_shares_by_gpu": self.eth_invalid_shares_by_gpu,
+            "eth_pool_switches": self.eth_pool_switches,
+            "eth_rejected_shares": self.eth_rejected_shares,
+            "eth_rejected_shares_by_gpu": self.eth_rejected_shares_by_gpu,
+            "gpu_fan_list": self.gpu_temp_list,
+            "gpu_temp_list": self.gpu_temp_list,
+            "miner_version": self.miner_version,
+            "mining_pool": self.mining_pool,
+            "pci_bus_index_by_gpu": self.pci_bus_index_by_gpu,
+            "running_time": self.running_time,
+            "share_acceptance_rate_avg": self.share_acceptance_rate_avg,
+            "share_acceptance_rate_max": self.share_acceptance_rate_max,
+            "share_acceptance_rate_min": self.share_acceptance_rate_min,
+            "total_gpu_power": self.total_gpu_power
+        }
         return result
 
     @staticmethod
@@ -382,50 +411,49 @@ class ExtendedStats(object):
                 result.gpu_fan_list.append(int(temp_and_fan_list[i + 1]))
             del temp_and_fan_list
 
-        result.mining_pool = data[7]
-        dcr_and_eth_share_stats = data[8].split(";")
-        result.eth_invalid_shares = dcr_and_eth_share_stats[0]
-        result.eth_pool_switches = dcr_and_eth_share_stats[1]
-        result.dcr_invalid_shares = dcr_and_eth_share_stats[2]
-        result.dcr_pool_switches = dcr_and_eth_share_stats[3]
-        del dcr_and_eth_share_stats
+            result.mining_pool = data[7]
+            dcr_and_eth_share_stats = data[8].split(";")
+            result.eth_invalid_shares = dcr_and_eth_share_stats[0]
+            result.eth_pool_switches = dcr_and_eth_share_stats[1]
+            result.dcr_invalid_shares = dcr_and_eth_share_stats[2]
+            result.dcr_pool_switches = dcr_and_eth_share_stats[3]
+            del dcr_and_eth_share_stats
 
-        ## Begin extended stats
-        result.eth_accepted_shares_by_gpu = []
-        for number_of_shares in data[9].split(";"):
-            result.eth_accepted_shares_by_gpu.append(int(number_of_shares))
+            ## Begin extended stats
+            result.eth_accepted_shares_by_gpu = []
+            for number_of_shares in data[9].split(";"):
+                result.eth_accepted_shares_by_gpu.append(int(number_of_shares))
 
-        result.eth_rejected_shares_by_gpu = []
-        for number_of_shares in data[10].split(";"):
-            result.eth_rejected_shares_by_gpu.append(int(number_of_shares))
+            result.eth_rejected_shares_by_gpu = []
+            for number_of_shares in data[10].split(";"):
+                result.eth_rejected_shares_by_gpu.append(int(number_of_shares))
 
-        result.eth_invalid_shares_by_gpu = []
-        for number_of_shares in data[11].split(";"):
-            result.eth_invalid_shares_by_gpu.append(int(number_of_shares))
+            result.eth_invalid_shares_by_gpu = []
+            for number_of_shares in data[11].split(";"):
+                result.eth_invalid_shares_by_gpu.append(int(number_of_shares))
 
-        result.dcr_accepted_shares_by_gpu = []
-        for number_of_shares in data[12].split(";"):
-            result.dcr_accepted_shares_by_gpu.append(int(number_of_shares))
+            result.dcr_accepted_shares_by_gpu = []
+            for number_of_shares in data[12].split(";"):
+                result.dcr_accepted_shares_by_gpu.append(int(number_of_shares))
 
+            result.dcr_rejected_shares_by_gpu = []
+            for number_of_shares in data[13].split(";"):
+                result.dcr_rejected_shares_by_gpu.append(int(number_of_shares))
 
-        result.dcr_rejected_shares_by_gpu = []
-        for number_of_shares in data[13].split(";"):
-            result.dcr_rejected_shares_by_gpu.append(int(number_of_shares))
+            result.dcr_invalid_shares_by_gpu = []
+            for number_of_shares in data[14].split(";"):
+                result.dcr_invalid_shares_by_gpu.append(int(number_of_shares))
 
-        result.dcr_invalid_shares_by_gpu = []
-        for number_of_shares in data[14].split(";"):
-            result.dcr_invalid_shares_by_gpu.append(int(number_of_shares))
+            result.pci_bus_index_by_gpu = []
+            for index in data[15].split(";"):
+                result.pci_bus_index_by_gpu.append(int(index))
 
-        result.pci_bus_index_by_gpu = []
-        for index in data[15].split(";"):
-            result.pci_bus_index_by_gpu.append(int(index))
+            share_acceptance_stats = data[16].split(";")
+            result.share_acceptance_rate_min = share_acceptance_stats[0]
+            result.share_acceptance_rate_max = share_acceptance_stats[1]
+            result.share_acceptance_rate_avg = share_acceptance_stats[2]
+            del share_acceptance_stats
 
-        share_acceptance_stats = data[16].split(";")
-        result.share_acceptance_rate_min = share_acceptance_stats[0]
-        result.share_acceptance_rate_max = share_acceptance_stats[1]
-        result.share_acceptance_rate_avg = share_acceptance_stats[2]
-        del share_acceptance_stats
-
-        result.total_gpu_power = int(data[17])
+            result.total_gpu_power = int(data[17])
 
         return result

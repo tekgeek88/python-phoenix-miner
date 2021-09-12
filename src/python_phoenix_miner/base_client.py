@@ -42,22 +42,26 @@ class BaseClient(object):
 
     def request(self, method: str=None, **kwargs):
         default_request = self.default_request()
+        json_data = {}
         if method:
             default_request["method"] = method
         data_bytes = json.dumps(default_request).encode('ascii')
 
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((self._ip, self._port))
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((self._ip, self._port))
 
-        s.sendall(data_bytes)
-        s.sendall(b'\n')
-        data = s.recv(1024)
-        s.close()
-        print(f'Received {len(data)} byte(s)')
-        json_data = json.loads(data)
+            s.sendall(data_bytes)
+            s.sendall(b'\n')
+            data = s.recv(1024)
+            s.close()
+            print(f'Received {len(data)} byte(s)')
+            json_data = json.loads(data)
+        except Exception:
+            print(f'Failed to connect to {self._ip}:{self._port}')
         return json_data
 
     def check_response(self, response, main_message: str):
         if 'id' not in response or 'jsonrpc' not in response or 'result' not in response:
             message = main_message + '\n'
-            raise Exception(message)
+            print(message)
