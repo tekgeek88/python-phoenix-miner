@@ -6,6 +6,13 @@
 An API Wrapper for the Phoenix miner RPC socket client API
 
 ## How to use it
+
+### Install Package
+```
+pip install python-ethermine
+```
+
+### Example
 ```
 from python_phoenix_miner import PhoenixClient
 
